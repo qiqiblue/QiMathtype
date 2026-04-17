@@ -1,0 +1,7 @@
+PySide6>=6.6.0
+Pillow>=10.0.0
+matplotlib>=3.8.0
+
+# 公式 OCR 后端（建议至少安装一个）
+pix2tex>=0.1.2
+pix2text>=1.1.2
