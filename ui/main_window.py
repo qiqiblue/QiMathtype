@@ -35,16 +35,29 @@ class OCRWorker(QObject):
 
     finished = Signal(str)
     failed = Signal(str)
+    status = Signal(str)
 
-    def __init__(self, engine: FormulaEngine, image: Image.Image) -> None:
+    # 共享引擎：首次识别时初始化，后续复用，避免每次重复加载模型
+    _shared_engine: FormulaEngine | None = None
+
+    def __init__(self, image: Image.Image, backend: str = "auto") -> None:
         super().__init__()
-        self.engine = engine
         self.image = image
+        self.backend = backend
 
     def run(self) -> None:
         try:
+            if OCRWorker._shared_engine is None:
+                self.status.emit("正在初始化 OCR 引擎（首次可能会下载模型，请稍候）...")
+                OCRWorker._shared_engine = FormulaEngine(backend=self.backend)
+
+            engine = OCRWorker._shared_engine
+            if engine is None:
+                raise RuntimeError("OCR 引擎初始化失败。")
+
+            self.status.emit("正在识别公式...")
             processed = preprocess_for_formula_ocr(self.image)
-            latex = self.engine.recognize_formula(processed)
+            latex = engine.recognize_formula(processed)
             self.finished.emit(latex)
         except Exception as exc:
             self.failed.emit(str(exc))
@@ -57,8 +70,8 @@ class MainWindow(QMainWindow):
         self.resize(1200, 800)
         self.setAcceptDrops(True)
 
-        # OCR 引擎初始化。默认自动尝试 pix2tex / pix2text
-        self.formula_engine = FormulaEngine(backend="auto")
+        # OCR 后端类型。真正引擎实例由后台线程按需懒加载。
+        self.ocr_backend = "auto"
         self.current_image: Image.Image | None = None
 
         self.ocr_thread: QThread | None = None
@@ -242,15 +255,16 @@ class MainWindow(QMainWindow):
             return
 
         self.recognize_btn.setEnabled(False)
-        self.recognize_btn.setText("识别中...")
+        self.recognize_btn.setText("识别中（首次会初始化模型）...")
 
         self.ocr_thread = QThread(self)
-        self.ocr_worker = OCRWorker(self.formula_engine, self.current_image.copy())
+        self.ocr_worker = OCRWorker(self.current_image.copy(), backend=self.ocr_backend)
         self.ocr_worker.moveToThread(self.ocr_thread)
 
         self.ocr_thread.started.connect(self.ocr_worker.run)
         self.ocr_worker.finished.connect(self._on_ocr_finished)
         self.ocr_worker.failed.connect(self._on_ocr_failed)
+        self.ocr_worker.status.connect(self._on_ocr_status)
 
         # 线程结束后清理资源，避免多次识别造成对象泄漏
         self.ocr_worker.finished.connect(self._cleanup_ocr_thread)
@@ -267,6 +281,10 @@ class MainWindow(QMainWindow):
         self.recognize_btn.setEnabled(True)
         self.recognize_btn.setText("识别")
         QMessageBox.critical(self, "识别失败", f"识别过程出错：\n{message}")
+
+    def _on_ocr_status(self, message: str) -> None:
+        # 将阶段性状态反馈到按钮文案，给用户明确进度感知
+        self.recognize_btn.setText(message)
 
     def _cleanup_ocr_thread(self) -> None:
         if self.ocr_thread is not None:
