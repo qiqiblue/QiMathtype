@@ -1,0 +1,169 @@
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #667085;
+  --line: #d0d5dd;
+  --primary: #1064d3;
+  --primary-weak: #e8f1ff;
+  --success: #067647;
+  --warn: #b54708;
+  --error: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top right, #e9f2ff, transparent 45%), var(--bg);
+}
+
+.container {
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 16px 32px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.hero p {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.06);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.dropzone {
+  display: grid;
+  place-items: center;
+  min-height: 140px;
+  border: 2px dashed #8eb6f0;
+  border-radius: 12px;
+  background: var(--primary-weak);
+  color: #0f3b7a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 12px;
+  text-align: center;
+}
+
+.dropzone.is-dragover {
+  border-color: var(--primary);
+  background: #dceaff;
+}
+
+.preview-wrap {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+#previewImage {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+select,
+button,
+textarea {
+  font: inherit;
+}
+
+select,
+button {
+  height: 38px;
+}
+
+select {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+#latexOutput {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  resize: vertical;
+}
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.status[data-type="success"] {
+  color: var(--success);
+}
+
+.status[data-type="warn"] {
+  color: var(--warn);
+}
+
+.status[data-type="error"] {
+  color: var(--error);
+}
+
+@media (max-width: 640px) {
+  .hero h1 {
+    font-size: 24px;
+  }
+}

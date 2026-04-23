@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QiMathType Web MVP</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1>QiMathType Web</h1>
+      <p>上传公式图片，调用 API 返回 LaTeX。</p>
+    </header>
+
+    <section class="card">
+      <h2>图片输入</h2>
+      <label class="dropzone" id="dropZone" for="fileInput">
+        <span id="dropText">点击选择图片，或拖拽图片到此处</span>
+        <input id="fileInput" type="file" accept="image/*" hidden>
+      </label>
+
+      <div class="preview-wrap">
+        <img id="previewImage" alt="预览图" hidden>
+      </div>
+
+      <div class="controls">
+        <label for="backendSelect">后端：</label>
+        <select id="backendSelect">
+          <option value="auto">auto</option>
+          <option value="pix2tex">pix2tex</option>
+          <option value="pix2text">pix2text</option>
+        </select>
+        <button id="recognizeBtn" type="button">识别</button>
+      </div>
+      <p id="statusText" class="status">等待上传图片</p>
+    </section>
+
+    <section class="card">
+      <h2>LaTeX 结果</h2>
+      <textarea id="latexOutput" rows="8" readonly placeholder="识别结果会显示在这里"></textarea>
+      <div class="actions">
+        <button id="copyBtn" type="button">复制结果</button>
+        <span id="engineMeta" class="meta"></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

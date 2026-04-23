@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc.*
+
+# Virtual environments
+.venv/
+.venv312/
+venv/
+
+# Local runtime files
+*.log
+
+
+*.pth
+*.dll
